@@ -13,8 +13,8 @@ interface Table {
 }
 
 const tables: Table[] = [
-  { id: 1, seats: 4, x: 150, y: 150, isAvailable: true },
-  { id: 2, seats: 2, x: 350, y: 150, isAvailable: false },
+  { id: 1, seats: 4, x: 200, y: 10, isAvailable: true },
+  { id: 2, seats: 2, x: 320, y: 10, isAvailable: false },
   { id: 3, seats: 6, x: 550, y: 150, isAvailable: true },
   { id: 4, seats: 4, x: 150, y: 350, isAvailable: true },
   { id: 5, seats: 4, x: 350, y: 350, isAvailable: true },
@@ -45,8 +45,15 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
   };
 
   return (
-    <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl">
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+    <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl"
+      style={{
+        backgroundImage: 'url(/background.jpg)',
+        backgroundSize: 'fit', // Ensures the image covers the whole container
+        backgroundPosition: 'center', // Centers the background image
+        // backgroundRepeat: 'no-repeat',  
+      }}
+    >
+      <div className="absolute inset-0 bg-white/10 " /> {/* <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" /> */}
       <div className="relative h-full">
         {tables.map((table) => (
           <motion.div
@@ -55,7 +62,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
               table.isAvailable ? 'hover:scale-110' : 'opacity-50'
             }`}
             style={{ left: table.x, top: table.y }}
-            whileHover={{ scale: 1.1 }}
+            // whileHover={{ scale: 1.1 }}
             onHoverStart={() => setHoveredTable(table.id)}
             onHoverEnd={() => setHoveredTable(null)}
             onClick={() => handleTableClick(table)}
