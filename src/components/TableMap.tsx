@@ -74,7 +74,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 px-4 py-2 bg-white rounded-lg shadow-lg"
+                className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full -mt-4 px-4 py-2 bg-white rounded-lg shadow-lg"
               >
                 <div className="text-sm font-medium text-gray-900">
                   Table {table.id}
