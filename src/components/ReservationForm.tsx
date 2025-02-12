@@ -20,14 +20,15 @@ interface ReservationFormProps {
 
 export const ReservationForm = ({ tableId, onReservationComplete }: ReservationFormProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [time, setTime] = useState("");
+  const [arrivalTime, setArrivalTime] = useState("");
+  const [departureTime, setDepartureTime] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date || !time || !name || !email || !phone) {
+    if (!date || !arrivalTime || !departureTime || !name || !email || !phone) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -36,7 +37,8 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
     console.log({
       tableId,
       date,
-      time,
+      arrivalTime,
+      departureTime,
       name,
       email,
       phone
@@ -49,6 +51,11 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
   const timeSlots = [
     "12:00", "13:00", "14:00", "15:00", "16:00", 
     "17:00", "18:00", "19:00", "20:00", "21:00"
+  ];
+
+  const departureTimeSlots = [
+    "13:00", "14:00", "15:00", "16:00", "17:00",
+    "18:00", "19:00", "20:00", "21:00", "22:00"
   ];
 
   return (
@@ -73,13 +80,29 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
         </div>
 
         <div>
-          <Label>Time</Label>
-          <Select onValueChange={setTime}>
+          <Label>Reservation Time</Label>
+          <Select onValueChange={setArrivalTime}>
             <SelectTrigger>
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
             <SelectContent>
               {timeSlots.map((slot) => (
+                <SelectItem key={slot} value={slot}>
+                  {slot}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Estimated Departure Time</Label>
+          <Select onValueChange={setDepartureTime}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select time" />
+            </SelectTrigger>
+            <SelectContent>
+              {departureTimeSlots.map((slot) => (
                 <SelectItem key={slot} value={slot}>
                   {slot}
                 </SelectItem>

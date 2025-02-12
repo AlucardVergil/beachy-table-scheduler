@@ -10,16 +10,18 @@ interface Table {
   x: number;
   y: number;
   isAvailable: boolean;
+  availableHours: string[]
 }
 
 const tables: Table[] = [
-  { id: 1, seats: 4, x: 200, y: 10, isAvailable: true },
-  { id: 2, seats: 2, x: 320, y: 10, isAvailable: false },
-  { id: 3, seats: 6, x: 550, y: 150, isAvailable: true },
-  { id: 4, seats: 4, x: 150, y: 350, isAvailable: true },
-  { id: 5, seats: 4, x: 350, y: 350, isAvailable: true },
-  { id: 6, seats: 8, x: 550, y: 350, isAvailable: true },
+  { id: 1, seats: 4, x: 200, y: 10, isAvailable: true, availableHours: ["12:00", "14:00", "16:00"] },
+  { id: 2, seats: 2, x: 320, y: 10, isAvailable: false, availableHours: [] },
+  { id: 3, seats: 6, x: 550, y: 150, isAvailable: true, availableHours: ["13:00", "15:00", "18:00"] },
+  { id: 4, seats: 4, x: 150, y: 350, isAvailable: true, availableHours: ["12:00", "17:00"] },
+  { id: 5, seats: 4, x: 350, y: 350, isAvailable: true, availableHours: ["14:00", "19:00"] },
+  { id: 6, seats: 8, x: 550, y: 350, isAvailable: true, availableHours: ["12:00", "15:00", "20:00"] },
 ];
+
 
 interface TableMapProps {
   onSelectTable: (table: Table) => void;
@@ -30,6 +32,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
 
   const handleTableClick = (table: Table) => {
     if (!table.isAvailable) {
+      onSelectTable(null);
       toast.error("This table is not available for the selected time");
       return;
     }
@@ -59,7 +62,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
           <motion.div
             key={table.id}
             className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${
-              table.isAvailable ? 'hover:scale-110' : 'opacity-50'
+              table.isAvailable ? 'hover:scale-110' : ''
             }`}
             style={{ left: table.x, top: table.y }}
             // whileHover={{ scale: 1.1 }}
@@ -71,7 +74,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
               className={`${getTableSize(table.seats)} rounded-full flex flex-col items-center justify-center ${
                 table.isAvailable 
                   ? 'bg-beach-ocean shadow-lg hover:bg-beach-ocean-dark' 
-                  : 'bg-gray-400'
+                  : 'bg-gray-400 opacity-100'
               } transition-all duration-200 border-4 border-white/50`}
             >
               <Umbrella className="w-6 h-6 text-white mb-1" />
@@ -89,9 +92,27 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
                 <div className="text-sm text-gray-600">
                   {table.seats} seats
                 </div>
-                <div className="text-xs text-beach-ocean-dark font-medium mt-1">
+                <div className={`text-xs font-medium mt-1 ${
+                    table.isAvailable ? 'text-beach-ocean-dark' : 'text-red-500'
+                  }`}
+                >
                   {table.isAvailable ? 'Available' : 'Not Available'}
                 </div>
+
+                {table.isAvailable && (
+                  <div className="mt-2 text-xs text-gray-700">
+                    <strong>Free Hours:</strong>
+                    <ul className="list-disc ml-4">
+                      {table.availableHours.length > 0 ? (
+                        table.availableHours.map((hour) => (
+                          <li key={hour}>{hour}</li>
+                        ))
+                      ) : (
+                        <li>No free slots</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </motion.div>
             )}
           </motion.div>
