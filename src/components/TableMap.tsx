@@ -13,12 +13,12 @@ interface Table {
 }
 
 const tables: Table[] = [
-  { id: 1, seats: 4, x: 100, y: 100, isAvailable: true },
-  { id: 2, seats: 2, x: 300, y: 100, isAvailable: false },
-  { id: 3, seats: 6, x: 500, y: 100, isAvailable: true },
-  { id: 4, seats: 4, x: 100, y: 300, isAvailable: true },
-  { id: 5, seats: 4, x: 300, y: 300, isAvailable: true },
-  { id: 6, seats: 8, x: 500, y: 300, isAvailable: true },
+  { id: 1, seats: 4, x: 150, y: 150, isAvailable: true },
+  { id: 2, seats: 2, x: 350, y: 150, isAvailable: false },
+  { id: 3, seats: 6, x: 550, y: 150, isAvailable: true },
+  { id: 4, seats: 4, x: 150, y: 350, isAvailable: true },
+  { id: 5, seats: 4, x: 350, y: 350, isAvailable: true },
+  { id: 6, seats: 8, x: 550, y: 350, isAvailable: true },
 ];
 
 interface TableMapProps {
@@ -45,7 +45,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
   };
 
   return (
-    <div className="relative w-full h-[500px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-8 overflow-hidden shadow-xl">
+    <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl">
       <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
       <div className="relative h-full">
         {tables.map((table) => (
