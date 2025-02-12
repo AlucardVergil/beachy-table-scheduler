@@ -21,7 +21,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-beach-sand to-beach-ocean-light p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -31,10 +31,10 @@ const Index = () => {
           <p className="text-lg text-gray-600">Select a table to make your reservation</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="space-y-8">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="w-full"
           >
             <TableMap onSelectTable={setSelectedTable} />
@@ -44,10 +44,10 @@ const Index = () => {
             {selectedTable ? (
               <motion.div
                 key="form"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="w-full"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="w-full max-w-xl mx-auto"
               >
                 <ReservationForm
                   tableId={selectedTable.id}
@@ -60,9 +60,9 @@ const Index = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center justify-center h-full"
+                className="flex items-center justify-center"
               >
-                <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg">
+                <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg max-w-xl mx-auto">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-4">How to Reserve</h2>
                   <ol className="text-left text-gray-600 space-y-2">
                     <li>1. Select an available table from the map</li>
