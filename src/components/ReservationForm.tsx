@@ -25,38 +25,58 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [availableHours, setAvailableHours] = useState<string[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (date) {
+      fetchAvailableHours();
+    }
+  }, [date, tableId]);
+
+  const fetchAvailableHours = async () => {
+    try {
+      const response = await fetch(`/api/tables/${tableId}/availability?date=${date?.toISOString()}`);
+      if (!response.ok) throw new Error('Failed to fetch available hours');
+      const data = await response.json();
+      setAvailableHours(data.availableHours);
+    } catch (error) {
+      console.error('Error fetching available hours:', error);
+      toast.error('Failed to fetch available hours');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !arrivalTime || !departureTime || !name || !email || !phone) {
       toast.error("Please fill in all fields");
       return;
     }
     
-    // Here you would typically make an API call to save the reservation
-    console.log({
-      tableId,
-      date,
-      arrivalTime,
-      departureTime,
-      name,
-      email,
-      phone
-    });
+    try {
+      const response = await fetch('/api/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tableId,
+          date,
+          arrivalTime,
+          departureTime,
+          name,
+          email,
+          phone,
+        }),
+      });
 
-    toast.success("Reservation completed successfully!");
-    onReservationComplete();
+      if (!response.ok) throw new Error('Failed to create reservation');
+
+      toast.success("Reservation completed successfully!");
+      onReservationComplete();
+    } catch (error) {
+      toast.error("Failed to create reservation");
+    }
   };
-
-  const timeSlots = [
-    "12:00", "13:00", "14:00", "15:00", "16:00", 
-    "17:00", "18:00", "19:00", "20:00", "21:00"
-  ];
-
-  const departureTimeSlots = [
-    "13:00", "14:00", "15:00", "16:00", "17:00",
-    "18:00", "19:00", "20:00", "21:00", "22:00"
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
@@ -80,15 +100,15 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
         </div>
 
         <div>
-          <Label>Reservation Time</Label>
+          <Label>Arrival Time</Label>
           <Select onValueChange={setArrivalTime}>
             <SelectTrigger>
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
             <SelectContent>
-              {timeSlots.map((slot) => (
-                <SelectItem key={slot} value={slot}>
-                  {slot}
+              {availableHours.map((hour) => (
+                <SelectItem key={hour} value={hour}>
+                  {hour}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -96,17 +116,19 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
         </div>
 
         <div>
-          <Label>Estimated Departure Time</Label>
+          <Label>Departure Time</Label>
           <Select onValueChange={setDepartureTime}>
             <SelectTrigger>
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
             <SelectContent>
-              {departureTimeSlots.map((slot) => (
-                <SelectItem key={slot} value={slot}>
-                  {slot}
-                </SelectItem>
-              ))}
+              {availableHours
+                .filter((hour) => hour > arrivalTime)
+                .map((hour) => (
+                  <SelectItem key={hour} value={hour}>
+                    {hour}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>

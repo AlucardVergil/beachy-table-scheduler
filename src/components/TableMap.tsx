@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from "sonner";
 import { Umbrella } from "lucide-react";
@@ -10,7 +9,7 @@ interface Table {
   x: number;
   y: number;
   isAvailable: boolean;
-  availableHours: string[]
+  availableHours: string[];
 }
 
 const tables: Table[] = [
@@ -22,16 +21,31 @@ const tables: Table[] = [
   { id: 6, seats: 8, x: 550, y: 350, isAvailable: true, availableHours: ["12:00", "15:00", "20:00"] },
 ];
 
-
 interface TableMapProps {
   onSelectTable: (table: Table) => void;
 }
 
 export const TableMap = ({ onSelectTable }: TableMapProps) => {
   const [hoveredTable, setHoveredTable] = useState<number | null>(null);
+  const [tablesWithAvailability, setTablesWithAvailability] = useState(tables);
+
+  useEffect(() => {
+    fetchTableAvailability();
+  }, []);
+
+  const fetchTableAvailability = async () => {
+    try {
+      const response = await fetch('/api/tables/availability');
+      if (!response.ok) throw new Error('Failed to fetch table availability');
+      const data = await response.json();
+      setTablesWithAvailability(data);
+    } catch (error) {
+      console.error('Error fetching table availability:', error);
+    }
+  };
 
   const handleTableClick = (table: Table) => {
-    if (!table.isAvailable) {
+    if (!table.availableHours.length) {
       onSelectTable(null);
       toast.error("This table is not available for the selected time");
       return;
@@ -56,25 +70,24 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
         // backgroundRepeat: 'no-repeat',  
       }}
     >
-      <div className="absolute inset-0 bg-white/10 " /> {/* <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" /> */}
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
       <div className="relative h-full">
-        {tables.map((table) => (
+        {tablesWithAvailability.map((table) => (
           <motion.div
             key={table.id}
             className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${
-              table.isAvailable ? 'hover:scale-110' : ''
+              table.availableHours.length > 0 ? 'hover:scale-105' : 'opacity-50'
             }`}
             style={{ left: table.x, top: table.y }}
-            // whileHover={{ scale: 1.1 }}
             onHoverStart={() => setHoveredTable(table.id)}
             onHoverEnd={() => setHoveredTable(null)}
             onClick={() => handleTableClick(table)}
           >
             <div
               className={`${getTableSize(table.seats)} rounded-full flex flex-col items-center justify-center ${
-                table.isAvailable 
+                table.availableHours.length > 0
                   ? 'bg-beach-ocean shadow-lg hover:bg-beach-ocean-dark' 
-                  : 'bg-gray-400 opacity-100'
+                  : 'bg-gray-400'
               } transition-all duration-200 border-4 border-white/50`}
             >
               <Umbrella className="w-6 h-6 text-white mb-1" />
@@ -84,7 +97,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full -mt-4 px-4 py-2 bg-white rounded-lg shadow-lg"
+                className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full -mt-4 px-4 py-2 bg-white rounded-lg shadow-lg w-48"
               >
                 <div className="text-sm font-medium text-gray-900">
                   Table {table.id}
@@ -92,25 +105,18 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
                 <div className="text-sm text-gray-600">
                   {table.seats} seats
                 </div>
-                <div className={`text-xs font-medium mt-1 ${
-                    table.isAvailable ? 'text-beach-ocean-dark' : 'text-red-500'
-                  }`}
-                >
-                  {table.isAvailable ? 'Available' : 'Not Available'}
-                </div>
-
-                {table.isAvailable && (
-                  <div className="mt-2 text-xs text-gray-700">
-                    <strong>Free Hours:</strong>
-                    <ul className="list-disc ml-4">
-                      {table.availableHours.length > 0 ? (
-                        table.availableHours.map((hour) => (
-                          <li key={hour}>{hour}</li>
-                        ))
-                      ) : (
-                        <li>No free slots</li>
-                      )}
-                    </ul>
+                {table.availableHours.length > 0 ? (
+                  <div className="mt-2">
+                    <p className="text-xs font-medium text-beach-ocean-dark">Available Hours:</p>
+                    <div className="mt-1 text-xs text-gray-600 max-h-24 overflow-y-auto">
+                      {table.availableHours.map((hour, index) => (
+                        <div key={index} className="py-0.5">{hour}</div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-red-500 font-medium mt-1">
+                    No available hours
                   </div>
                 )}
               </motion.div>
@@ -121,3 +127,5 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
     </div>
   );
 };
+
+export default TableMap;
