@@ -1,19 +1,19 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
+import { ApiRequest, ApiResponse } from '@/types/api';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
     const db = await connectToDatabase();
-    const { id } = req.query;
+    const { id } = req.params;
 
     const result = await db.collection('reservations').updateOne(
-      { _id: new ObjectId(id as string) },
+      { _id: new ObjectId(id) },
       { $set: { status: 'cancelled' } }
     );
 

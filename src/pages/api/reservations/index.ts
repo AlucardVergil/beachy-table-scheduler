@@ -1,10 +1,10 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
+import { ApiRequest, ApiResponse } from '@/types/api';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import type { Reservation } from '@/types';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   const db = await connectToDatabase();
 
   if (req.method === 'GET') {
