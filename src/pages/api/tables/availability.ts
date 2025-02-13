@@ -21,14 +21,15 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     }).toArray();
 
     const tablesWithAvailability = tables.map(table => {
-      const tableReservations = reservations.filter(r => r.tableId === table.id);
-      const bookedHours = new Set(tableReservations.map(r => r.arrivalTime));
-      const availableHours = table.availableHours.filter(hour => !bookedHours.has(hour));
+      const isReserved = reservations.some(r => r.tableId === table.id);
 
       return {
-        ...table,
-        isAvailable: availableHours.length > 0,
-        availableHours
+        id: table.id,
+        seats: table.seats,
+        x: table.x,  // Ensure x-position is included
+        y: table.y,  // Ensure y-position is included
+        type: table.type || 'restaurant', // Default to 'restaurant' if type is missing
+        isAvailable: !isReserved
       };
     });
 

@@ -1,4 +1,3 @@
-
 import { ApiRequest, ApiResponse } from '@/types/api';
 import { connectToDatabase } from '@/lib/mongodb';
 
@@ -9,29 +8,26 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
   try {
     const db = await connectToDatabase();
-    const { id } = req.params;
+    const tableId = parseInt(req.query.id as string);
     const date = req.query.date ? new Date(req.query.date as string) : new Date();
 
-    const table = await db.collection('tables').findOne({ id: parseInt(id) });
+    const table = await db.collection('tables').findOne({ id: tableId });
     if (!table) {
       return res.status(404).json({ message: 'Table not found' });
     }
 
-    const reservations = await db.collection('reservations').find({
-      tableId: parseInt(id),
+    const hasReservation = await db.collection('reservations').findOne({
+      tableId,
       date: {
         $gte: new Date(date.setHours(0, 0, 0, 0)),
         $lt: new Date(date.setHours(23, 59, 59, 999))
       },
       status: 'active'
-    }).toArray();
-
-    const bookedHours = new Set(reservations.map(r => r.arrivalTime));
-    const availableHours = table.availableHours.filter(hour => !bookedHours.has(hour));
+    });
 
     res.status(200).json({
       tableId: table.id,
-      availableHours
+      isAvailable: !hasReservation,
     });
   } catch (error) {
     console.error('Error fetching table availability:', error);
