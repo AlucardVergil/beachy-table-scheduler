@@ -1,14 +1,13 @@
 
 import { Request, Response } from 'express';
+import { ParsedQs } from 'qs';
 
 export interface ApiRequest extends Request {
-  query: {
-    [key: string]: string | string[];
-  };
+  query: ParsedQs;
   body: any;
 }
 
-export interface ApiResponse<T = any> extends Response {
-  json: (body: T) => this;
-  status: (code: number) => this;
+export interface ApiResponse extends Response {
+  json: (body: any) => ApiResponse;
+  status: (code: number) => ApiResponse;
 }
