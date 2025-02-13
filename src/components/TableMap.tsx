@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from "sonner";
@@ -65,9 +66,8 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
     <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl"
       style={{
         backgroundImage: 'url(/background.jpg)',
-        backgroundSize: 'fit', // Ensures the image covers the whole container
-        backgroundPosition: 'center', // Centers the background image
-        // backgroundRepeat: 'no-repeat',  
+        backgroundSize: 'fit',
+        backgroundPosition: 'center',
       }}
     >
       <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
