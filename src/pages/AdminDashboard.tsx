@@ -70,7 +70,7 @@ const AdminDashboard = () => {
                 <div>
                   <p className="font-medium">Table {reservation.tableId}</p>
                   <p className="text-sm text-gray-600">
-                    {new Date(reservation.date).toLocaleDateString()} {reservation.arrivalTime} - {reservation.departureTime}
+                    {new Date(reservation.date).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-600">{reservation.name} - {reservation.phone}</p>
                 </div>

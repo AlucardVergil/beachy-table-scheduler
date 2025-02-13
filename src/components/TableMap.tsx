@@ -8,7 +8,7 @@ import type { Table } from '@/types';
 const initialTables: Table[] = [
   // Beach tables
   { id: 1, seats: 4, x: 200, y: 10, type: 'beach', isAvailable: true },
-  { id: 2, seats: 2, x: 320, y: 10, type: 'beach', isAvailable: true },
+  { id: 2, seats: 2, x: 320, y: 10, type: 'beach', isAvailable: false },
   { id: 3, seats: 6, x: 550, y: 150, type: 'beach', isAvailable: true },
   // Restaurant tables
   { id: 4, seats: 4, x: 150, y: 350, type: 'restaurant', isAvailable: true },
@@ -56,14 +56,21 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
   };
 
   return (
-    <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl">
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+    <div className="relative w-full h-[600px] bg-gradient-to-br from-beach-sand to-beach-ocean-light rounded-xl p-16 overflow-hidden shadow-xl"
+      style={{
+        backgroundImage: 'url(/background.jpg)',
+        backgroundSize: 'fit', // Ensures the image covers the whole container
+        backgroundPosition: 'center', // Centers the background image
+        // backgroundRepeat: 'no-repeat',  
+      }}
+    >
+      <div className="absolute inset-0 bg-white/10 " />
       <div className="relative h-full">
         {tables.map((table) => (
           <motion.div
             key={table.id}
             className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${
-              table.isAvailable ? 'hover:scale-105' : 'opacity-50'
+              table.isAvailable ? 'hover:scale-105' : ''
             }`}
             style={{ left: table.x, top: table.y }}
             onHoverStart={() => setHoveredTable(table.id)}
@@ -74,7 +81,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
               className={`${getTableSize(table.seats)} rounded-full flex flex-col items-center justify-center ${
                 table.isAvailable
                   ? 'bg-beach-ocean shadow-lg hover:bg-beach-ocean-dark' 
-                  : 'bg-gray-400'
+                  : 'bg-gray-400 opacity-90'
               } transition-all duration-200 border-4 border-white/50`}
             >
               {table.type === 'beach' ? (
@@ -103,6 +110,12 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
                     <p>Dinner: 18:00-23:00</p>
                   </div>
                 )}
+                 <div className={`text-xs font-medium mt-1 ${
+                    table.isAvailable ? 'text-beach-ocean-dark' : 'text-red-500'
+                  }`}
+                >
+                  {table.isAvailable ? 'Available' : 'Not Available'}
+                </div>
               </motion.div>
             )}
           </motion.div>
