@@ -14,7 +14,7 @@ interface Table {
 }
 
 const tables: Table[] = [
-  { id: 1, seats: 4, x: 200, y: 10, isAvailable: true, availableHours: ["12:00", "14:00", "16:00"] },
+  { id: 1, seats: 4, x: 200, y: 10, isAvailable: true, availableHours: ["13:00", "14:00", "16:00"] },
   { id: 2, seats: 2, x: 320, y: 10, isAvailable: false, availableHours: [] },
   { id: 3, seats: 6, x: 550, y: 150, isAvailable: true, availableHours: ["13:00", "15:00", "18:00"] },
   { id: 4, seats: 4, x: 150, y: 350, isAvailable: true, availableHours: ["12:00", "17:00"] },
