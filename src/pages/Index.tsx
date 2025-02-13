@@ -3,14 +3,7 @@ import { useState } from 'react';
 import { TableMap } from '@/components/TableMap';
 import { ReservationForm } from '@/components/ReservationForm';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Table {
-  id: number;
-  seats: number;
-  x: number;
-  y: number;
-  isAvailable: boolean;
-}
+import type { Table } from '@/types';
 
 const Index = () => {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
@@ -27,7 +20,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Beach Bar Reservations</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Beach Bar & Restaurant Reservations</h1>
           <p className="text-lg text-gray-600">Select a table to make your reservation</p>
         </motion.div>
 
@@ -50,7 +43,7 @@ const Index = () => {
                 className="w-full max-w-xl mx-auto"
               >
                 <ReservationForm
-                  tableId={selectedTable.id}
+                  table={selectedTable}
                   onReservationComplete={handleReservationComplete}
                 />
               </motion.div>
@@ -65,10 +58,11 @@ const Index = () => {
                 <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg max-w-xl mx-auto">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-4">How to Reserve</h2>
                   <ol className="text-left text-gray-600 space-y-2">
-                    <li>1. Select an available table from the map</li>
-                    <li>2. Choose your preferred date and time</li>
+                    <li>1. Select an available table from the map (Beach or Restaurant)</li>
+                    <li>2. Choose your preferred date {selectedTable?.type === 'restaurant' && 'and time slot'}</li>
                     <li>3. Fill in your contact details</li>
-                    <li>4. Confirm your reservation</li>
+                    <li>4. Choose payment method</li>
+                    <li>5. Confirm your reservation</li>
                   </ol>
                 </div>
               </motion.div>

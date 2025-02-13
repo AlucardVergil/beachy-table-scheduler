@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,45 +12,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Table, RESTAURANT_TIME_SLOTS } from '@/types';
 
 interface ReservationFormProps {
-  tableId: number | null;
+  table: Table;
   onReservationComplete: () => void;
 }
 
 const API_URL = 'http://localhost:8081';
 
-export const ReservationForm = ({ tableId, onReservationComplete }: ReservationFormProps) => {
+export const ReservationForm = ({ table, onReservationComplete }: ReservationFormProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [arrivalTime, setArrivalTime] = useState("");
-  const [departureTime, setDepartureTime] = useState("");
+  const [timeSlot, setTimeSlot] = useState<'lunch' | 'dinner' | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [availableHours, setAvailableHours] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (date) {
-      fetchAvailableHours();
-    }
-  }, [date, tableId]);
-
-  const fetchAvailableHours = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/tables/${tableId}/availability?date=${date?.toISOString()}`);
-      if (!response.ok) throw new Error('Failed to fetch available hours');
-      const data = await response.json();
-      setAvailableHours(data.availableHours);
-    } catch (error) {
-      console.error('Error fetching available hours:', error);
-      toast.error('Failed to fetch available hours');
-    }
-  };
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'notify'>('notify');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date || !arrivalTime || !departureTime || !name || !email || !phone) {
-      toast.error("Please fill in all fields");
+    if (!date || !name || !email || !phone) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (table.type === 'restaurant' && !timeSlot) {
+      toast.error("Please select a time slot");
       return;
     }
     
@@ -61,19 +48,26 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          tableId,
+          tableId: table.id,
           date,
-          arrivalTime,
-          departureTime,
+          timeSlot: table.type === 'restaurant' ? timeSlot : null,
           name,
           email,
           phone,
+          type: table.type,
+          paymentStatus: paymentMethod === 'card' ? 'pending' : 'not_required',
         }),
       });
 
       if (!response.ok) throw new Error('Failed to create reservation');
 
-      toast.success("Reservation completed successfully!");
+      if (paymentMethod === 'card') {
+        // TODO: Implement Stripe payment flow
+        toast.info("Payment functionality coming soon!");
+      } else {
+        toast.success("Reservation request sent! Admin will be notified.");
+      }
+
       onReservationComplete();
     } catch (error) {
       toast.error("Failed to create reservation");
@@ -84,7 +78,7 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="text-center mb-6">
         <div className="inline-block px-4 py-1 bg-beach-ocean-light text-beach-ocean-dark rounded-full text-sm font-medium mb-2">
-          Table {tableId}
+          {table.type === 'beach' ? 'Beach' : 'Restaurant'} Table {table.id}
         </div>
         <h2 className="text-2xl font-semibold text-gray-900">Make a Reservation</h2>
       </div>
@@ -101,39 +95,20 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
           />
         </div>
 
-        <div>
-          <Label>Arrival Time</Label>
-          <Select onValueChange={setArrivalTime}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select time" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableHours.map((hour) => (
-                <SelectItem key={hour} value={hour}>
-                  {hour}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label>Departure Time</Label>
-          <Select onValueChange={setDepartureTime}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select time" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableHours
-                .filter((hour) => hour > arrivalTime)
-                .map((hour) => (
-                  <SelectItem key={hour} value={hour}>
-                    {hour}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {table.type === 'restaurant' && (
+          <div>
+            <Label>Time Slot</Label>
+            <Select onValueChange={(value: 'lunch' | 'dinner') => setTimeSlot(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select time slot" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="lunch">{RESTAURANT_TIME_SLOTS.lunch}</SelectItem>
+                <SelectItem value="dinner">{RESTAURANT_TIME_SLOTS.dinner}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div>
           <Label>Name</Label>
@@ -163,6 +138,19 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
             onChange={(e) => setPhone(e.target.value)}
             className="w-full"
           />
+        </div>
+
+        <div>
+          <Label>Payment Method</Label>
+          <Select onValueChange={(value: 'card' | 'notify') => setPaymentMethod(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select payment method" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="card">Pay by Card</SelectItem>
+              <SelectItem value="notify">Notify Admin Only</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Button
