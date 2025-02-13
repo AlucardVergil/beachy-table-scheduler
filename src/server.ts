@@ -16,8 +16,14 @@ app.use(json());
 app.use(cors());
 
 // Helper function to wrap our route handlers
-const wrapHandler = (handler: (req: ApiRequest, res: ApiResponse) => Promise<ApiResponse>): RequestHandler => {
-  return (req, res) => handler(req as ApiRequest, res as ApiResponse);
+const wrapHandler = (handler: (req: ApiRequest, res: ApiResponse) => Promise<void>): RequestHandler => {
+  return async (req, res, next) => {
+    try {
+      await handler(req as ApiRequest, res as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
 };
 
 // API routes
