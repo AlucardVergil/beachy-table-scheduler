@@ -18,6 +18,8 @@ interface ReservationFormProps {
   onReservationComplete: () => void;
 }
 
+const API_URL = 'http://localhost:8081';
+
 export const ReservationForm = ({ tableId, onReservationComplete }: ReservationFormProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [arrivalTime, setArrivalTime] = useState("");
@@ -35,7 +37,7 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
 
   const fetchAvailableHours = async () => {
     try {
-      const response = await fetch(`/api/tables/${tableId}/availability?date=${date?.toISOString()}`);
+      const response = await fetch(`${API_URL}/api/tables/${tableId}/availability?date=${date?.toISOString()}`);
       if (!response.ok) throw new Error('Failed to fetch available hours');
       const data = await response.json();
       setAvailableHours(data.availableHours);
@@ -53,7 +55,7 @@ export const ReservationForm = ({ tableId, onReservationComplete }: ReservationF
     }
     
     try {
-      const response = await fetch('/api/reservations', {
+      const response = await fetch(`${API_URL}/api/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
