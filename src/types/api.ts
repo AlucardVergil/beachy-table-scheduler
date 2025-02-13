@@ -7,7 +7,7 @@ export interface ApiRequest extends Request {
   body: any;
 }
 
-export interface ApiResponse extends Response {
-  json: (body: any) => ApiResponse;
-  status: (code: number) => ApiResponse;
+export interface ApiResponse<T = any> extends Response {
+  json: (body: T) => this;
+  status: (code: number) => this;
 }
