@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ export const ReservationForm = ({ table, onReservationComplete }: ReservationFor
     }
     
     try {
-      const response = await fetch(`${API_URL}/api/reservations`, {
+      const response = await fetch('/api/reservations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

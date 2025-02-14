@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from "sonner";
@@ -30,7 +29,7 @@ export const TableMap = ({ onSelectTable }: TableMapProps) => {
 
   const fetchTableAvailability = async () => {
     try {
-      const response = await fetch('http://localhost:8081/api/tables/availability');
+      const response = await fetch('/api/tables/availability');
       if (!response.ok) throw new Error('Failed to fetch table availability');
       const data = await response.json();
       setTables(data);
