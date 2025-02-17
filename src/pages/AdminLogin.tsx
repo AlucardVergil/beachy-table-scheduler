@@ -1,11 +1,10 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
-const API_URL = 'http://localhost:8081';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -16,10 +15,12 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Use relative path that works both locally and in production
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
+        credentials: 'include', // Include credentials for cookie handling
       });
 
       if (!response.ok) {
@@ -31,7 +32,8 @@ const AdminLogin = () => {
       navigate('/admin');
       toast.success('Successfully logged in');
     } catch (error) {
-      toast.error('Login failed');
+      console.error('Login error:', error);
+      toast.error('Login failed. Please check your credentials.');
     }
   };
 
