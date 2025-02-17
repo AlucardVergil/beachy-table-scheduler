@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,16 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
+const API_URL = 'http://localhost:8081';
+
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     try {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
@@ -23,20 +22,16 @@ const AdminLogin = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error('Invalid credentials');
       }
 
-      login(data.token);
+      const { token } = await response.json();
+      login(token);
       navigate('/admin');
       toast.success('Successfully logged in');
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
+      toast.error('Login failed');
     }
   };
 
@@ -52,7 +47,6 @@ const AdminLogin = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              disabled={isLoading}
             />
           </div>
           <div>
@@ -62,11 +56,10 @@ const AdminLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isLoading}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+          <Button type="submit" className="w-full">
+            Login
           </Button>
         </form>
       </div>
