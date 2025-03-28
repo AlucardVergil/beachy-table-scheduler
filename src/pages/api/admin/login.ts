@@ -1,8 +1,12 @@
-
 import { ApiRequest, ApiResponse } from '@/types/api';
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') {
@@ -25,7 +29,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
     const token = jwt.sign(
       { userId: admin._id, username: admin.username },
-      'your-secret-key',
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 

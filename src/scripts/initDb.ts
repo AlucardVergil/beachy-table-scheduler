@@ -1,4 +1,3 @@
-
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
 
@@ -21,6 +20,7 @@ async function initializeDatabase() {
         seats: 4,
         x: 200,
         y: 10,
+        type: 'beach',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       },
       {
@@ -28,6 +28,7 @@ async function initializeDatabase() {
         seats: 2,
         x: 320,
         y: 10,
+        type: 'beach',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       },
       {
@@ -35,6 +36,7 @@ async function initializeDatabase() {
         seats: 6,
         x: 550,
         y: 150,
+        type: 'beach',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       },
       {
@@ -42,6 +44,7 @@ async function initializeDatabase() {
         seats: 4,
         x: 150,
         y: 350,
+        type: 'restaurant',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       },
       {
@@ -49,6 +52,7 @@ async function initializeDatabase() {
         seats: 4,
         x: 350,
         y: 350,
+        type: 'restaurant',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       },
       {
@@ -56,6 +60,7 @@ async function initializeDatabase() {
         seats: 8,
         x: 550,
         y: 350,
+        type: 'restaurant',
         availableHours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
       }
     ];
